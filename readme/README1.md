@@ -1,0 +1,43 @@
+Team Name’s FIRE Summit Presentation
+================
+Team Members
+
+## Research Question
+
+Write research question here.
+
+(Optional) Insert an image if it helps motivate the research question.
+
+## Data Wrangling
+
+**Outcome variable**
+
+Write description, data source, and wrangling methodology. Show a map if
+you have made one.
+
+If you have loops, do not run the entire thing. Instead, run one sample
+loop or just display your codes without making it run by adding **\#\|
+eval: false** at the top of the chunk.
+
+You can also suppress warnings by adding **\#\| warning: false**.
+
+``` r
+library("tidyverse")
+library("terra")
+library("simplermarkdown")
+```
+
+**Treatment variable**
+
+Write description, data source, and wrangling methodology. Show a map if
+you have one.
+
+**Control variables**
+
+Write description, data source, and wrangling methodology. Show a map if
+you have one.
+
+## Preliminary Results
+
+Display a figure showing how the treatment variable impacted the outcome
+variable.

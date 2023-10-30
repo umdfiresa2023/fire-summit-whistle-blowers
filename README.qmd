@@ -1,42 +1,67 @@
 ---
-title: "Team Name's FIRE Summit Presentation"
-author: "Team Members"
+title: "Team Whistleblower's FIRE Summit Presentation"
+author: "Anant Agrawal, Tyler, Ishaan Kalra"
 format: gfm
 editor: visual
 ---
 
-## Research Question
+# [**Research Question**]{.underline}
 
-Write research question here.
+Are companies who claim to place an emphasis on ESG initiatives effective in reducing their air pollution emissions?
 
-(Optional) Insert an image if it helps motivate the research question.
+![](1.png)
 
-## Data Wrangling
+# [***Data Querying***]{.underline}
 
-**Outcome variable**
+## Querying for 10K Filings
 
-Write description, data source, and wrangling methodology. Show a map if you have made one.
+### **1. Prerequisites**
 
-If you have loops, do not run the entire thing. Instead, run one sample loop or just display your codes without making it run by adding **#\| eval: false** at the top of the chunk.
+1.Node.js
 
-You can also suppress warnings by adding **#\| warning: false**.
+2.NPM
 
-```{r}
-#| warning: false
-
-library("tidyverse")
-library("terra")
-library("simplermarkdown")
+``` javascript
 ```
 
-**Treatment variable**
+## Querying for FLIGHT DATA
 
-Write description, data source, and wrangling methodology. Show a map if you have one.
+### **1. Loading Required Libraries**
 
-**Control variables**
+``` r
+library(readxl)
+library(finreportr)
+library(R.utils)
+library(tidyverse)
+library(httr)
+library(XBRL)
+```
 
-Write description, data source, and wrangling methodology. Show a map if you have one.
+### **2. Setting User Agent for HTTP Requests**
 
-## Preliminary Results
+`options(HTTPUserAgent = "xyz@abc.com")`
 
-Display a figure showing how the treatment variable impacted the outcome variable.
+### **3. Retrieving Annual Reports Information**
+
+`info.df <- AnnualReports("GOOG")`
+
+### **4. Defining Custom Function for Retrieving Annual Reports Information**
+
+``` r
+```
+
+### **5. Extracting Information from SEC Website**
+
+### **6. Importing FLIGHT Data**
+
+### **7. Selecting and Saving Specific Columns**
+
+### **8. Filtering Data for Target Companies**
+
+# [***Data Wrangling***]{.underline}
+
+## Outcome variable
+
+## **Treatment variable**
+
+## **Control variables**
