@@ -416,6 +416,7 @@ merge_df <- merge(filterframe2, esg_df, by.x = "REPORTING YEAR", by.y = "REPORTI
   filter(`REPORTING YEAR` %in% c(2011,2012,2013, 2014,2015,2016,2017,2018,2019,2020))
 
 #Create graph with two Y-axises
+#
 my_plot <- ggplot(merge_df, aes(x = `REPORTING YEAR`)) +
   # First y-axis: GHG QUANTITY
   geom_line(aes(y = `GHG QUANTITY (METRIC TONS CO2e)`), color = "blue") +
