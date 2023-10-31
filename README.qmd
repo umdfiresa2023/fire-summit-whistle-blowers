@@ -305,6 +305,7 @@ write.csv(filterframe, "flightCompanies.csv")
 4.  The code then calculates an average sentiment score to gauge the overall tone of the environmental statements in the reports, which can provide insights into a company's commitment to environmental sustainability.
 
 ```{r}
+#| eval: false
 library(textdata)
 library(tidyverse)
 library(dplyr)
