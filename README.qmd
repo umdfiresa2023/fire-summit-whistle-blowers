@@ -298,7 +298,7 @@ write.csv(filterframe, "flightCompanies.csv")
 
 1.  The provided R code is designed to assess how positively or negatively a company's environmental goals are expressed in its annual reports.
 
-2.   It does this by looking at sentences in the reports that contain words related to the environment and calculating an overall sentiment score for those sentences.
+2.  It does this by looking at sentences in the reports that contain words related to the environment and calculating an overall sentiment score for those sentences.
 
 3.  This score is based on a pre-defined list of words associated with positive or negative sentiments.
 
