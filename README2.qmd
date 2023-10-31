@@ -15,7 +15,7 @@ Are companies who claim to place an emphasis on ESG initiatives effective in red
 
 ## A. Treatment variable:
 
-Our treatment variable is
+Our treatment variable is the environmental sentiment score from a companies annual report. To get this variable we need to first get all the annual reports from <https://www.sec.gov/edgar/search/>, the SEC compiles all submitted data for all public companies into this database.
 
 ### Querying for 10K Filings 📈
 
@@ -332,10 +332,7 @@ filterframe <- filterframe %>%
 
 ```{r}
 #| eval: false
-<<<<<<< HEAD:README.qmd
-=======
 
->>>>>>> 784e611f250af6af43db92475924a96349640159:README2.qmd
 library(textdata)
 library(tidyverse)
 library(dplyr)
