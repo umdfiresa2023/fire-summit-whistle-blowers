@@ -12,7 +12,15 @@ effective in reducing their air pollution emissions?
 
 ## A. Treatment variable:
 
-Our treatment variable is
+Our treatment variable is the “environmental sentiment score” extracted
+from a company’s annual reports. To obtain this data, we begin by
+accessing the SEC’s EDGAR database
+(<https://www.sec.gov/edgar/search/>), which consolidates information
+submitted by publicly traded firms.
+
+We then employ sentiment analysis methods to evaluate the expressed
+sentiments within these reports. The result is the environmental
+sentiment score, a crucial component for our analysis.
 
 ### Querying for 10K Filings 📈
 
@@ -234,7 +242,6 @@ scrapeSECWebsite();
 
 ## B. Outcome variable:
 
-<<<<<<< HEAD
 Our outcome variable is greenhouse gas emissions from each target
 chemical company.
 
@@ -244,9 +251,6 @@ reports greenhouse gases for every facility in the U.S for each year.
 
 We transformed yearly facility emissions into total company emissions,
 as shown in the code below.
-=======
-Our outcome variable is
-
 
 ### Querying for FLIGHT DATA 📉
 
@@ -319,17 +323,12 @@ library(XBRL)
 ### **2. Function to retrieve annual GHG FLIGHT Data**
 
 ``` r
-<<<<<<< HEAD
 # Import FLIGHT data as excel file
-=======
-# Import FLIGHT data
->>>>>>> 603d1f2e5a6296b35562fff1db195029ab61dd35
 dir.create("exceldata", showWarnings = FALSE)
 folder <- paste0("exceldata", "/", "data")
 download.file("https://ghgdata.epa.gov/ghgp/service/export?q=&tr=current&ds=E&ryr=2022&cyr=2022&lowE=-20000&highE=23000000&st=&fc=&mc=&rs=ALL&sc=0&is=11&et=&tl=&pn=undefined&ol=0&sl=0&bs=&g1=1&g2=1&g3=1&g4=1&g5=1&g6=0&g7=1&g8=1&g9=1&g10=1&g11=1&g12=1&s1=0&s2=0&s3=0&s4=0&s5=0&s6=0&s7=1&s8=0&s9=0&s10=0&s201=0&s202=0&s203=0&s204=0&s301=0&s302=0&s303=0&s304=0&s305=0&s306=0&s307=0&s401=0&s402=0&s403=0&s404=0&s405=0&s601=0&s602=0&s701=1&s702=1&s703=1&s704=1&s705=1&s706=1&s707=1&s708=1&s709=1&s710=1&s711=1&s801=0&s802=0&s803=0&s804=0&s805=0&s806=0&s807=0&s808=0&s809=0&s810=0&s901=0&s902=0&s903=0&s904=0&s905=0&s906=0&s907=0&s908=0&s909=0&s910=0&s911=0&sf=11001100&allReportingYears=yes&listExport=false", folder, mode = "wb")
 excel_file_path <- "exceldata/data"
 
-<<<<<<< HEAD
 #Name of each sheet
 sheet_names <- excel_sheets(excel_file_path)
 
@@ -377,32 +376,6 @@ for (term in search_terms) {
 filterframe <- filterframe %>%
   group_by(`PARENT COMPANIES`, `REPORTING YEAR`) %>%
   summarize(`GHG QUANTITY (METRIC TONS CO2e)` = sum(`GHG QUANTITY (METRIC TONS CO2e)`))
-=======
-sheet_names <- excel_sheets(excel_file_path)
-
-# Define the search term (company name)
-search_term <- "PPG"
-```
-
-``` for
-  sheet_data <- read_excel(excel_file_path, sheet = sheet, skip = 6)
-  filtered_data <- sheet_data %>%
-    filter(str_detect(`PARENT COMPANIES`, regex(search_term, ignore_case = TRUE))) %>%
-    select("REPORTING YEAR", "PARENT COMPANIES", "GHG QUANTITY (METRIC TONS CO2e)")
-  
-  if (!is.data.frame(filtered_data) || nrow(filtered_data) == 0) {
-    cat("No data found for", search_term, "in sheet", sheet, "\n")
-  } else {
-    write.csv(filtered_data, paste0(search_term, "_flightdata.csv"), row.names = FALSE)
-  }
-}
-
-filterframe <- filterframe %>%
-  group_by(`PARENT COMPANIES`, `REPORTING YEAR`) %>%
-  summarize(`GHG QUANTITY (METRIC TONS CO2e)` = sum(`GHG QUANTITY (METRIC TONS CO2e)`))
-
-write.csv(filterframe, "flightCompanies.csv")
->>>>>>> 603d1f2e5a6296b35562fff1db195029ab61dd35
 ```
 
 # <u>**Data Wrangling**</u> **📊**
@@ -410,7 +383,6 @@ write.csv(filterframe, "flightCompanies.csv")
 1.  The provided R code is designed to assess how positively or
     negatively a company’s environmental goals are expressed in its
     annual reports.
-<<<<<<< HEAD
 
 2.  It does this by looking at sentences in the reports that contain
     words related to the environment and calculating an overall
@@ -511,6 +483,7 @@ merge_df <- merge(filterframe2, esg_df, by.x = "REPORTING YEAR", by.y = "REPORTI
   filter(`REPORTING YEAR` %in% c(2011,2012,2013, 2014,2015,2016,2017,2018,2019,2020))
 
 #Create graph with two Y-axises
+#
 my_plot <- ggplot(merge_df, aes(x = `REPORTING YEAR`)) +
   # First y-axis: GHG QUANTITY
   geom_line(aes(y = `GHG QUANTITY (METRIC TONS CO2e)`), color = "blue") +
@@ -539,90 +512,5 @@ my_plot <- ggplot(merge_df, aes(x = `REPORTING YEAR`)) +
 
   scale_x_continuous(breaks = seq(min(merge_df$`REPORTING YEAR`), max(merge_df$`REPORTING YEAR`), by = 1)) 
 ```
-=======
-
-2.  It does this by looking at sentences in the reports that contain
-    words related to the environment and calculating an overall
-    sentiment score for those sentences.
-
-3.  This score is based on a pre-defined list of words associated with
-    positive or negative sentiments.
-
-4.  The code then calculates an average sentiment score to gauge the
-    overall tone of the environmental statements in the reports, which
-    can provide insights into a company’s commitment to environmental
-    sustainability.
-
-``` r
-library(textdata)
-library(tidyverse)
-library(dplyr)
-library(tidytext)
-library(SnowballC)
-
-# reading the text file 
-
-# To find for multiple years we can use for loop
-# (file in c("2011.txt", "2012.txt", "2013.txt", "2014.txt", "2015.txt",
-#              "2016.txt", "2017.txt", "2018.txt", "2019.txt", "2020.txt",)){
-
-file = "2011.txt"
-
-test_data <- readLines(file)
-  
-df <- tibble(text = test_data)
-  
-test_data_sentences <- df %>%
-    unnest_tokens(output = "sentence",
-                  token = "sentences",
-                  input = text) 
-  
-#the total score of emotions
-total_score <- 0
-
-#the total score of emotions
-  total_score <- 0
-  
-  #for loop because words used separately as environment/environmental/environmentally
-  for(term in c("environment", "environmental", "environmentally")) {
-    
-    #considering the environment related sentences
-    env_sentences <- test_data_sentences[grepl(term, test_data_sentences$sentence), ]
-    
-    count <- 0
-    for(i in env_sentences) { 
-      for (j in i){
-        count <- count + 1
-      }
-    }
-    # Further Tokenize the text by word
-    env_tokens <- env_sentences %>%
-      unnest_tokens(output = "word", token = "words", input = sentence) %>%
-      anti_join(stop_words)
-    
-    afinnframe<-get_sentiments("afinn")
-    # Use afinn to find the overall sentiment score
-    affin_score <- env_tokens %>% 
-      inner_join(afinnframe, by = c("word" = "word")) %>%
-      summarise(sentiment = sum(value))
-    
-    total_score = total_score + affin_score
-  }
-  
-  total_score = total_score / count
-#}
-# End of for loop
-```
-
-# <u>**Preliminary Results**</u> **💡**
-
-Upon consolidating all the data, we can uncover the subtle nuances in
-how a company, PPG in this instance, has fared over the years in terms
-of its ESG (Environmental, Social, and Governance) scores. This provides
-a window into the company’s commitment to sustainable practices.
-Simultaneously, we delve into the company’s Greenhouse Gas (GHG)
-emissions, giving us insights into its environmental impact and how it
-has evolved over time.
-
 
 <img src="assets/my_plot.png" width="6600" />
