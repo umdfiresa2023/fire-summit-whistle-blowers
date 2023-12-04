@@ -24,6 +24,104 @@ sentiment score, a crucial component for our analysis.
 
 ### Querying for 10K Filings 📈
 
+#### *Language: JavaScript (Node.js environment)*
+
+### A. **Explanation of `scrapeSECWebsite()` Function**
+
+### Description
+
+This function scrapes financial documents links from the SEC website for
+specified companies.
+
+#### Steps
+
+1.  **Setup Puppeteer with StealthPlugin**: Initializes Puppeteer in
+    headless mode with a stealth plugin to avoid detection.
+
+2.  **Loop through Companies**: Iterates over a dictionary of company
+    names and their corresponding entity names.
+
+3.  **Build URL & Open New Page**: Constructs the URL for each company
+    and opens a new page.
+
+4.  **Page Navigation & Data Extraction**: Navigates to the URL, waits
+    for content, and extracts relevant links from the table.
+
+    - **Pagination Handling**: Loops through pages to get more links if
+      available.
+
+5.  **Filter & Process Links**: Processes each link, scraping and saving
+    the text content.
+
+6.  **Close Browser**: Closes the Puppeteer browser instance after
+    processing all companies.
+
+#### Additional Function: **`scrapeTextAndSaveToFile()`**
+
+- **Purpose**: Scrapes text content from a given URL and saves it to a
+  file.
+
+- **Operations**: Opens the URL, extracts text, sanitizes it, finds
+  fiscal year information, and saves to a file.
+
+#### Dependencies
+
+- **`fs`**: For file operations.
+
+- **`sanitize-filename`**: To sanitize file names.
+
+- **`puppeteer-extra`** and **`puppeteer-extra-plugin-stealth`**: For
+  enhanced browser automation.
+
+- **`string-strip-html`**: To strip HTML from scraped text.
+
+### B. **Explanation of `scrapeRevenueWebsite()` Function**
+
+#### Description
+
+This function scrapes revenue data from a specified website for a list
+of companies. The data is formatted into CSV and saved to a file.
+
+#### Steps
+
+1.  **Setup Puppeteer**: Initializes Puppeteer with a non-headless
+    browser and a custom executable path.
+
+2.  **Initialize CSV Data**: Sets up a CSV string header with “Company
+    Name, Year, Revenue”.
+
+3.  **Loop through Companies**: Iterates over a list of company names.
+
+4.  **Modify Company Name & Build URL**: Converts each company name to a
+    URL-friendly format.
+
+5.  **Open New Page**: Opens a new browser page for each company URL.
+
+6.  **Page Navigation & Wait**: Navigates to the URL and waits for
+    content to load.
+
+7.  **Data Extraction**: Executes a script in the page context to scrape
+    table data for revenue.
+
+    - **Extract Years and Revenue**: Grabs revenue data for years
+      2011-2021, converting billions to numeric values.
+
+8.  **Format & Add to CSV**: Formats the data per company and appends to
+    the CSV string.
+
+9.  **Close Browser**: Closes the Puppeteer browser instance.
+
+10. **Save to File**: Writes the CSV data to a file named
+    “company_revenue_data.csv”.
+
+#### Dependencies
+
+- **`fs`**: File System module for file operations.
+
+- **`puppeteer`**: For browser automation.
+
+### C. Scraping Code
+
 ### **1. Prerequisites**
 
 1.Node.js
@@ -64,7 +162,7 @@ const companyNames = {
 };
 ```
 
-### 5. Function to Run the Scraping Algorithm
+### 5. Function to Run the 10K Reports Scraping Algorithm
 
 ``` javascript
 async function scrapeSECWebsite() {
@@ -234,10 +332,80 @@ async function scrapeTextAndSaveToFile(url, year, companyName) {
 }
 ```
 
-### **7. Run scraping function**
+### 7. Function to Run the Revenue Scraping Algorithm
+
+``` javascript
+async function scrapeRevenueWebsite() {
+  const browser = await puppeteer.launch({
+    headless: false,
+    executablePath: executablePath(),
+  });
+
+  let csvData = "Company Name,Year,Revenue\n";
+
+  for (const companyName of companyNames) {
+    let modified = companyName.replace(" ", "-");
+    let url = `https://companiesmarketcap.com/${modified.toLowerCase()}/revenue/`;
+  
+    const page = await browser.newPage();
+
+    await page.goto(url);
+    await page.waitForTimeout(2000);
+
+    const result = await page.evaluate(() => {
+      const tableElement = document.querySelector(".table");
+      let rowData = "";
+
+      if (tableElement) {
+        const tbody = tableElement.querySelector("tbody");
+        if (tbody) {
+          const rows = tbody.querySelectorAll("tr");
+
+          rows.forEach((row) => {
+            const cells = row.querySelectorAll("td");
+            if (cells.length >= 2) {
+              const year = cells[0].textContent.trim().substring(0, 4);
+              if (year >= "2011" && year <= "2021") {
+                let revenue = cells[1].textContent.trim();
+                if (revenue.includes("B")) {
+                  revenue = revenue.replace("B", "").replace("$", "").trim();
+                  revenue = parseFloat(revenue) * 1e9; // Convert billion to numeric
+                }
+                rowData += `${year},${revenue}\n`;
+              }
+            }
+          });
+        } else {
+          console.error("Tbody element not found inside the table");
+        }
+      } else {
+        console.error("Table element not found");
+      }
+      return rowData;
+    });
+
+    csvData += result
+      .split("\n")
+      .map((line) => `${companyName},${line}`)
+      .join("\n");
+  }
+
+  await browser.close();
+  // Write CSV data to file
+    fs.writeFileSync("company_revenue_data.csv", csvData);
+}
+```
+
+### **8. Run 10K scraping function**
 
 ``` javascript
 scrapeSECWebsite();
+```
+
+### **9. Run Revenue scraping function**
+
+``` javascript
+scrapeRevenueWebsite();
 ```
 
 ## B. Outcome variable:
