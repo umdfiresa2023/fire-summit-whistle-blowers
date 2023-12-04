@@ -5,11 +5,13 @@ import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { stripHtml } from "string-strip-html";
 
-// Set up StealthPlugin
-puppeteer.use(StealthPlugin());
+
 
 // Import executablePath from puppeteer
 import { executablePath } from "puppeteer";
+
+// Set up StealthPlugin
+puppeteer.use(StealthPlugin());
 
 const companyNames = {
   // Albemarle: "ALB",
