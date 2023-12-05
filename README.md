@@ -657,4 +657,4 @@ my_plot <- ggplot(df2, aes(x = year)) +
   scale_x_continuous(breaks = seq(min(df2$year), max(df2$year), by = 1)) 
 ```
 
-<img src="westlakegraph.png" width="698" height="384" />
+![](assets/westlakegraph.png)

@@ -604,4 +604,4 @@ my_plot <- ggplot(df2, aes(x = year)) +
 
 ```
 
-![](westlakegraph.png){width="698" height="384"}
+![](assets/westlakegraph.png)
