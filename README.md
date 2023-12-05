@@ -428,62 +428,7 @@ as shown in the code below.
 library(readxl)
 library(finreportr)
 library(R.utils)
-```
-
-    Loading required package: R.oo
-
-    Loading required package: R.methodsS3
-
-    R.methodsS3 v1.8.2 (2022-06-13 22:00:14 UTC) successfully loaded. See ?R.methodsS3 for help.
-
-    R.oo v1.25.0 (2022-06-12 02:20:02 UTC) successfully loaded. See ?R.oo for help.
-
-
-    Attaching package: 'R.oo'
-
-    The following object is masked from 'package:R.methodsS3':
-
-        throw
-
-    The following objects are masked from 'package:methods':
-
-        getClasses, getMethods
-
-    The following objects are masked from 'package:base':
-
-        attach, detach, load, save
-
-    R.utils v2.12.2 (2022-11-11 22:00:03 UTC) successfully loaded. See ?R.utils for help.
-
-
-    Attaching package: 'R.utils'
-
-    The following object is masked from 'package:utils':
-
-        timestamp
-
-    The following objects are masked from 'package:base':
-
-        cat, commandArgs, getOption, isOpen, nullfile, parse, warnings
-
-``` r
 library(tidyverse)
-```
-
-    ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-    ✔ dplyr     1.1.3     ✔ readr     2.1.4
-    ✔ forcats   1.0.0     ✔ stringr   1.5.0
-    ✔ ggplot2   3.4.4     ✔ tibble    3.2.1
-    ✔ lubridate 1.9.3     ✔ tidyr     1.3.0
-    ✔ purrr     1.0.2     
-
-    ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-    ✖ tidyr::extract() masks R.utils::extract()
-    ✖ dplyr::filter()  masks stats::filter()
-    ✖ dplyr::lag()     masks stats::lag()
-    ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
-
-``` r
 library(httr)
 library(XBRL)
 ```
@@ -502,9 +447,8 @@ sheet_names <- excel_sheets(excel_file_path)
 
 # Define the search term (company name)
 search_term <- "PPG"
-```
 
-``` r
+
 #Skip rows with irrelevant data
 rows_to_skip <- 6  
 
@@ -548,21 +492,38 @@ filterframe <- filterframe %>%
 
 # <u>**Data Wrangling**</u> **📊**
 
-1.  The provided R code is designed to assess how positively or
-    negatively a company’s environmental goals are expressed in its
-    annual reports.
+1.  The provided R code is designed to assess how positively or
+negatively a company’s environmental goals are expressed in its annual
+reports.
 
-2.  It does this by looking at sentences in the reports that contain
-    words related to the environment and calculating an overall
-    sentiment score for those sentences.
+2.  It does this by looking at sentences in the reports that contain
+words related to the environment and calculating an overall sentiment
+score for those sentences.
 
-3.  This score is based on a pre-defined list of words associated with
-    positive or negative sentiments.
+3.  This score is based on a pre-defined list of words associated with
+positive or negative sentiments. The range of the sentiment values are
+-5 to 5, with -5 representing the most negative sentiment, and 5
+representing the most positive.
 
-4.  The code then calculates an average sentiment score to gauge the
-    overall tone of the environmental statements in the reports, which
-    can provide insights into a company’s commitment to environmental
-    sustainability.
+4.  The code then calculates an average sentiment score to gauge the
+overall tone of the environmental statements in the reports, which can
+provide insights into a company’s commitment to environmental
+sustainability.
+
+### What does the score and code overall mean? 🧐
+
+1.  All the functions used in this code about NLP are from the tidytext
+    and SnowballC packages present in R. 
+
+2.  The analysis begins with reading all the data from the 10K report
+    and then creates a database with all the report lines. 
+
+3.  The program checks for sentences with the words “environment”,
+    “environmental” and “environmentally” and analyzes what sentiment
+    each sentence depicts. 
+
+4.  Finally, the code averages out the score of each sentence to give an
+    aggregate ESG Score for that 10K.
 
 ``` r
 library(textdata)
@@ -625,60 +586,75 @@ total_score <- 0
 # End of for loop
 ```
 
+### Sample Analysis 🔬
+
+#### **Positive Sentiment on Environment**
+
+1.  **Appreciation for Environment:** Emphasizes love and proactive
+    environmental approaches in projects.
+
+2.  **Reduction of Emissions:** Prioritizes lowering emissions as a key
+    goal.
+
+#### **Negative Sentiment on Environment**
+
+1.  **Disregard for Environment:** Views environmental concerns as
+    wasteful and detrimental to profits.
+
+2.  **Sentiment Scoring:** Lower scores influenced by words like “cut”
+    and “worrying,” despite strong negatives like “hate.”
+
+#### **Sentiment Analysis**
+
+- The first text scored +3, showing positive sentiment.
+
+- The second text scored -1.33, reflecting negative sentiment.
+
+- The analysis demonstrates the ability to detect overall sentiments in
+  environmental contexts.
+
 # <u>**Preliminary Results**</u> **💡**
 
 Upon consolidating all the data, we can uncover the subtle nuances in
-how a company, PPG in this instance, has changed over the years in terms
-of its sentiment towards the environment. This provides a window into
-the company’s commitment to sustainable practices by comparing changes
-in sentiment to changes in emissions. This allows us to see whether the
-companies sentiment effects their emissions.
+how a company, Westlake in this instance, has changed over the years in
+terms of its sentiment towards the environment. This provides a window
+into the company’s commitment to sustainable practices by comparing
+changes in sentiment to changes in emissions as well as growing revenues
+over the years. This allows us to see whether the companies sentiment
+effects their emissions.
+
+<u>**Language: R**</u>
+
+The provided code creates a visual analysis for Westlake Chemical,
+comparing normalized greenhouse gas (GHG) emissions per revenue with the
+company’s Environmental, Social, and Governance (ESG) Score over time.
+This approach offers a nuanced view of Westlake’s environmental impact
+and sustainability commitment. By correlating GHG emissions (adjusted
+for financial size) with ESG performance, the visualization can reveal
+trends and potential discrepancies, highlighting the effectiveness of
+the company’s sustainable practices and its actual environmental impact
+in relation to its sustainability
 
 ``` r
-#filter to a target company
-filterframe2 <- filterframe %>%
-  filter(`PARENT COMPANIES` == "PPG Industries")
+#filter the final dataframe to just the Westlake company and normalize emissions with revenue
+df2 <- df %>%
+mutate(`GHG QUANTITY (METRIC TONS CO2e)` = `GHG QUANTITY (METRIC TONS CO2e)` / Revenue * 1000) %>%
+filter(company =="Westlake")
+  
 
-#alias the sentiment analysis dataframe
-esg_df <- results_df
-
-#Rename columns to help merge
-colnames(esg_df)[colnames(esg_df) == "REPORTING.YEAR"] <- "REPORTING YEAR"
-colnames(esg_df)[colnames(esg_df) == "sentiment"] <- "ESG_Score"
-
-#Merge yearly sentiment analysis of environmental terms with yearly emissions
-merge_df <- merge(filterframe2, esg_df, by.x = "REPORTING YEAR", by.y = "REPORTING YEAR", all.x = TRUE) %>%
-  filter(`REPORTING YEAR` %in% c(2011,2012,2013, 2014,2015,2016,2017,2018,2019,2020))
-
-#Create graph with two Y-axises
-#
-my_plot <- ggplot(merge_df, aes(x = `REPORTING YEAR`)) +
+my_plot <- ggplot(df2, aes(x = year)) +
   # First y-axis: GHG QUANTITY
   geom_line(aes(y = `GHG QUANTITY (METRIC TONS CO2e)`), color = "blue") +
   geom_point(aes(y = `GHG QUANTITY (METRIC TONS CO2e)`), color = "blue") +
-  
-  geom_text(
-    aes(x = `REPORTING YEAR`, y = `GHG QUANTITY (METRIC TONS CO2e)`, 
-        label = paste("(", `REPORTING YEAR`, ",", `GHG QUANTITY (METRIC TONS CO2e)`, "         )"),
-        angle = 50,
-        hjust = -.05,   
-        vjust = -.01
-        
-    ), size = 2 ) +
-  
-  labs(y = "GHG Quantity (Metric Tons CO2e)", x = "Year") +
-  
-  #Second y-axis: ESG_Score
-  geom_line(aes(y = `ESG_Score` * 10000000), color = "red") +
- 
-  labs(y = "ESG Index",  title = "GHG vs ESG Index") +
-  
+  labs(y = "GHG Quantity  / Revenue", x = "Year") +
+  geom_line(aes(y = `ESG_Score`), color = "red") +
+   labs(y = "ESG Index",  title = "GHG/Revenue vs ESG Index (Westlake Chemical)") +
+  # Add second y-axis
   scale_y_continuous(
-    name = "GHG Quantity",
-    sec.axis = sec_axis(~./10000000, name = "ESG Index")
+    name = "GHG Quantity / Revenue (BLUE)",
+     sec.axis = sec_axis(~.* 1, name = "ESG Index (RED)")
   ) +
-
-  scale_x_continuous(breaks = seq(min(merge_df$`REPORTING YEAR`), max(merge_df$`REPORTING YEAR`), by = 1)) 
+  scale_x_continuous(breaks = seq(min(df2$year), max(df2$year), by = 1)) 
 ```
 
-<img src="assets/my_plot.png" width="6600" />
+<img src="westlakegraph.png" width="684" />
